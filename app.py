@@ -99,7 +99,11 @@ def compute_similarity(user_answer, correct_answer):
     except Exception as e:
         app.logger.error(f"Error in compute_similarity: {str(e)}")
         raise
-
+        
+@app.route('/', methods=['GET'])
+def home():
+    return jsonify({"message": "Welcome to the Flask App!"}), 200
+    
 @app.route('/health', methods=['GET'])
 @log_request()
 def health_check():
