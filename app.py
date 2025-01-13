@@ -10,6 +10,7 @@ import groq
 from logging.handlers import RotatingFileHandler
 from datetime import datetime
 from functools import wraps
+from flask_cors import CORS
 
 # Load environment variables
 load_dotenv()
