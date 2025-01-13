@@ -1,4 +1,4 @@
-from app import Flask, request, jsonify
+from flask import Flask, request, jsonify
 from dotenv import load_dotenv
 import os
 import logging
