@@ -1,5 +1,5 @@
 flask
 python-dotenv
-groq-sdk
+groq
 spacy
 numpy
