@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Answer Rating</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+        textarea, input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+        .rating {
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: green;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Answer Rating System</h1>
+        <form id="ratingForm">
+            <label for="userAnswer">Your Answer:</label>
+            <textarea id="userAnswer" required></textarea>
+
+            <label for="correctAnswer">Correct Answer:</label>
+            <textarea id="correctAnswer" required></textarea>
+
+            <button type="submit">Get Ratings</button>
+        </form>
+
+        <div class="rating" id="spacyRatingOutput"></div>
+        <div class="rating" id="groqRatingOutput"></div>
+    </div>
+
+    <script>
+        document.getElementById('ratingForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const userAnswer = document.getElementById('userAnswer').value;
+            const correctAnswer = document.getElementById('correctAnswer').value;
+
+            try {
+                // SpaCy rating
+                const spacyResponse = await fetch('https://daedalus-server.onrender.com/api/spacy-rate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ userAnswer, correctAnswer })
+                });
+
+                const spacyResult = await spacyResponse.json();
+
+                if (spacyResponse.ok) {
+                    document.getElementById('spacyRatingOutput').innerText = `SpaCy Rating: ${spacyResult.rating}`;
+                } else {
+                    document.getElementById('spacyRatingOutput').innerText = `SpaCy Error: ${spacyResult.error}`;
+                    document.getElementById('spacyRatingOutput').classList.add('error');
+                }
+
+                // Groq rating
+                const groqResponse = await fetch('https://daedalus-server.onrender.com/api/groq-rate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ userAnswer, correctAnswer })
+                });
+
+                const groqResult = await groqResponse.json();
+
+                if (groqResponse.ok) {
+                    document.getElementById('groqRatingOutput').innerText = `Groq Rating: ${groqResult.rating}`;
+                } else {
+                    document.getElementById('groqRatingOutput').innerText = `Groq Error: ${groqResult.error}`;
+                    document.getElementById('groqRatingOutput').classList.add('error');
+                }
+
+            } catch (error) {
+                console.error('Error fetching ratings:', error);
+            }
+        });
+    </script>
+
+</body>
+</html>
