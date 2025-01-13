@@ -17,6 +17,11 @@ load_dotenv()
 # Initialize Flask app
 app = Flask(__name__)
 
+# Enable CORS for specific routes and origins
+CORS(app, resources={
+    r"/api/*": {"origins": "http://localhost"}
+})
+
 # Configure logging
 def setup_logger():
     # Create logs directory if it doesn't exist
