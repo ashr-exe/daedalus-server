@@ -20,7 +20,7 @@ app = Flask(__name__)
 
 # Enable CORS for specific routes and origins
 CORS(app, resources={
-    r"/api/*": {"origins": "http://localhost"}
+    r"/api/*": {"origins": "http://127.0.0.1:5500"}
 })
 
 # Configure logging
