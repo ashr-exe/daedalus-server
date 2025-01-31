@@ -120,6 +120,32 @@ def require_auth_token(f):
         return f(*args, **kwargs)
     return decorated
 
+@app.route('/generate-token', methods=['POST'])
+def generate_token():
+    try:
+        data = request.get_json()
+        firebase_token = data.get('firebaseToken')
+        
+        # Verify Firebase token (you'll need to install firebase-admin)
+        try:
+            decoded_token = firebase_admin.auth.verify_id_token(firebase_token)
+            uid = decoded_token['uid']
+        except Exception as e:
+            return jsonify({"error": "Invalid Firebase token"}), 401
+
+        # Generate a JWT with a short expiration
+        payload = {
+            'sub': uid,
+            'exp': datetime.utcnow() + timedelta(hours=1)
+        }
+        token = jwt.encode(payload, JWT_SECRET_KEY, algorithm='HS256')
+        
+        return jsonify({"token": token})
+    
+    except Exception as e:
+        app.logger.error(f"Token generation error: {str(e)}")
+        return jsonify({"error": "Token generation failed"}), 500
+
 # Middleware for request logging
 def log_request(f):
     @wraps(f)
